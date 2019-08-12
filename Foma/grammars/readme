@@ -1,0 +1,187 @@
+foma -l enhu2.foma <savestack.sh
+
+savestack.sh has following content:
+source english.foma
+save stack hun41.fst
+
+
+regex <regex>                     read a regular expression
+ambiguous upper                   returns the input words which have multiple paths in a transducer
+apply up <string>                 apply <string> up to the top network on stack
+apply down <string>               apply <string> down to the top network on stack
+apply med <string>                find approximate matches to string in top network by minimum edit distance
+apply up                          enter apply up mode (Ctrl-D exits)
+apply down                        enter apply down mode (Ctrl-D exits)
+apply med                         enter apply med mode (Ctrl-D exits)
+apropos <string>                  search help for <string>
+clear stack                       clears the stack
+close sigma                       removes unknown symbols from FSM
+compact sigma                     removes redundant symbols from FSM
+complete net                      completes the FSM
+compose net                       composes networks on stack
+concatenate                       concatenates networks on stack
+crossproduct net                  cross-product of top two FSMs on stack
+define <name> <r.e.>              define a network
+define <fname>(<v1,..,vn>) <r.e.> define function
+determinize net                   determinizes top FSM on stack
+echo <string>                     echo a string
+eliminate flag <name>             eliminate flag <name> diacritics from the top network
+eliminate flags                   eliminate all flag diacritics from the top network
+export cmatrix (filename)         export the confusion matrix as an AT&T transducer
+extract ambiguous                 extracts the ambiguous paths of a transducer
+extract unambiguous               extracts the unambiguous paths of a transducer
+help license                      prints license
+help warranty                     prints warranty information
+ignore net                        applies ignore to top two FSMs on stack
+intersect net                     intersects FSMs on stack
+invert net                        inverts top FSM
+label net                         extracts all attested symbol pairs from FSM
+letter machine                    Converts top FSM to a letter machine
+load stack <filename>             Loads networks and pushes them on the stack
+load defined <filename>           Restores defined networks from file
+lower-side net                    takes lower projection of top FSM
+minimize net                      minimizes top FSM
+name net <string>                 names top FSM
+negate net                        complements top FSM
+one-plus net                      Kleene plus on top FSM
+pop stack                         remove top FSM from stack
+print cmatrix                     prints the confusion matrix associated with the top network in tabular format
+print defined                     prints defined symbols and functions
+print dot (>filename)             prints top FSM in Graphviz dot format
+print lower-words                 prints words on the lower side of top FSM
+print lower-words > filename      prints words on the lower side of top FSM to file
+print name                        prints the name of the top FSM
+print net                         prints all information about top FSM
+print pairs                       prints input-output pairs from top FSM
+print pairs > filename            prints input-output pairs from top FSM to file
+print random-lower                prints random words from lower side
+print random-upper                prints random words from upper side
+print random-words                prints random words from top FSM
+print random-pairs                prints random input-output pairs from top FSM
+print sigma                       prints the alphabet of the top FSM
+print size                        prints size information about top FSM
+print shortest-string             prints the shortest string of the top FSM
+print shortest-string-size        prints length of shortest string
+print upper-words                 prints words on the upper side of top FSM
+print upper-words > filename      prints words on the upper side of top FSM to file
+print words                       prints words of top FSM
+print words > filename            prints words of top FSM to file
+prune net                         makes top network coaccessible
+push (defined) <name>             adds a defined FSM to top of stack
+quit                              exit foma
+read att <filename>               read a file in AT&T FSM format and add to top of stack
+read cmatrix <filename>           read a confusion matrix and associate it with the network on top of the stack
+read prolog <filename>            reads prolog format file
+read lexc <filename>              read and compile lexc format file
+read spaced-text <filename>       compile space-separated words/word-pairs separated by newlines into a FST
+read text <filename>              compile a list of words separated by newlines into an automaton
+reverse net                       reverses top FSM
+rotate stack                      rotates stack
+save defined <filename>           save all defined networks to binary file
+save stack <filename>             save stack to binary file
+set <variable> <ON|OFF>           sets a global variable (see show variables)
+show variables                    prints all variable/value pairs
+shuffle net                       asynchronous product on top two FSMs on stack
+sigma net                         Extracts the alphabet and creates a FSM that accepts all single symbols in it
+source <file>                     read and compile script file
+sort net                          sorts arcs topologically on top FSM
+sort in                           sorts input arcs by sigma numbers on top FSM
+sort out                          sorts output arcs by sigma number on top FSM
+substitute defined X for Y        substitutes defined network X at all arcs containing Y
+substitute symbol X for Y         substitutes all occurrences of Y in an arc with X
+system <cmd>                      execute a system command
+test unambiguous                  test if top FST is unambiguous
+test equivalent                   test if the top two FSMs are equivalent
+test functional                   test if the top FST is functional (single-valued)
+test identity                     test if top FST represents identity relations only
+test lower-universal              test if lower side is Σ*
+test upper-universal              test if upper side is Σ*
+test non-null                     test if top machine is not the empty language
+test null                         test if top machine is the empty language (∅)
+test sequential                   tests if top machine is sequential
+test star-free                    test if top FSM is star-free
+turn stack                        turns stack upside down
+twosided flag-diacritics          changes flags to always be identity pairs
+undefine <name>                   remove <name> from defined networks
+union net                         union of top two FSMs
+upper-side net                    upper projection of top FSM
+view net                          display top network (if supported)
+zero-plus net                     Kleene star on top fsm
+variable compose-tristate         use the tristate composition algorithm
+variable show-flags               show flag diacritics in `apply'
+variable obey-flags               obey flag diacritics in `apply'
+variable minimal                  minimize resulting FSMs
+variable print-pairs              always print both sides when applying
+variable print-space              print spaces between symbols
+variable print-sigma              print the alphabet when printing network
+quit-on-fail                      Abort operations when encountering errors
+variable recursive-define         Allow recursive definitions
+variable verbose                  Verbosity of interface
+variable hopcroft-min             ON = Hopcroft minimization, OFF = Brzozowski minimization
+variable med-limit                the limit on number of matches in apply med
+variable med-cutoff               the cost limit for terminating a search in apply med
+variable att-epsilon              the EPSILON symbol when reading/writing AT&T files
+variable lexc-align               Forces X:0 X:X of 0:X alignment of lexicon entry symbols
+write prolog (> filename)         writes top network to prolog format file/stdout
+write att (> <filename>)          writes top network to AT&T format file/stdout
+re operator: (∀<var name>)(F)     universal quantification
+re operator: (∃<var name>)(F)     existential quantification
+logic re operator: ∈              `in' predicate for logical formulae
+logic re operator: S(t1,t2)       successor-of predicate for logical formulae
+logic re operator: ≤              less-than or equal-to
+logic re operator: ≥              more-than or equal-to
+logic re operator: ≺              precedes
+logic re operator: ≻              follows
+logic re operator: ∧              conjunction
+logic re operator: ∨              disjunction
+logic re operator: →              implication
+logic re operator: ↔              biconditional
+re operator: ∘ (or .o.)           compose
+re operator: × (or .x.)           cross-product
+re operator: .O.                  `lenient' composition
+re operator: ∥ (or <>)            shuffle (asynchronous product)
+re operator: =>                   context restriction, e.g. A => B _ C, D _ E
+re operator: ->, <-, <->, etc.    replacement operators
+re operator: @->, @>, etc.        directed replacement operators
+re operator: (->), (@->), etc.    optional replacements
+re operator: ||,\/,\\,//          replacement direction specifiers
+re operator: _                    replacement or restriction context specifier
+re operator: ,,                   parallel context replacement operator
+re operator: ,                    parallel replacement operator
+re operator: [.<r.e.>.]           single-epsilon control in replacement LHS, e.g. [..] -> x
+re operator: ...                  markup replacement control (e.g. A -> B ... C || D _ E)
+re operator:                      concatenation
+re operator: ∪ (or |)             union
+re operator: ∩ (or &)             intersection
+re operator: -                    set minus
+re operator: .P.                  priority union (upper)
+re operator: .p.                  priority union (lower)
+re operator: <                    precedes
+re operator: >                    follows
+re operator: /                    ignore
+re operator: ./.                  ignore except at edges
+re operator: \\\                  left quotient
+re operator: ///                  right quotient
+re operator: /\/                  interleaving quotient
+re operator: ¬ (or ~)             complement
+re operator: $                    contains a factor of
+re operator: $.                   contains exactly one factor of
+re operator: $?                   contains maximally one factor of
+re operator: +                    Kleene plus
+re operator: *                    Kleene star
+re operator: ^n ^<n ^>n ^{m,n}    m, n-ary concatenations
+re operator: ₁ (or .1 or .u)      upper projection
+re operator: ₂ (or .2 or .l)      lower projection
+re operator: ⁻¹ (or .i)           inverse of transducer
+re operator: .f                   eliminate all flags
+re operator: .r                   reverse of FSM
+re operator: :                    cross-product
+re operator: \                    term complement (\x = [Σ-x])
+re operator: `                    substitution/homomorphism
+re operator: { ... }              concatenate symbols
+re operator: (A)                  optionality
+re operator: @"filename"          read saved network from file
+special symbol: Σ (or ?)          `any' symbol in r.e.
+special symbol: ε (or 0, [])      epsilon symbol in r.e.
+special symbol: ∅                 the empty language symbol in r.e.
+special symbol: .#.               word boundary symbol in replacements, restrictions

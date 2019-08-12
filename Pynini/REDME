@@ -1,0 +1,305 @@
+* DOCS
+
+# transducer
+
+transducer(istring, 
+           ostring, 
+           weight=None, 
+           arc_type="standard",
+           input_token_type="byte", 
+           output_token_type="byte",
+           attach_input_symbols=True, 
+           attach_output_symbols=True)
+
+Creates a transducer from a pair of strings or acceptor FSTs.
+
+This function creates an FST which transduces from the first string to the second with a fixed weight (defaulting to 
+semiring One). If one or both of the input arguments is already compiled as an FST, the resulting transducer
+is simply the cross-product between the language accepted by the upper and lower FSTs.
+
+Args:
+  * istring: The input string, or an acceptor FST representing the upper language.
+
+  * ostring: The output string, or an acceptor FST representing the upper  language.
+
+  * weight: A Weight or weight string indicating the desired path weight. If omitted or null, the path weight is set to 
+    semiring One. This argument is silently ignored if istring and/or ostring is already compiled.
+
+  * arc_type: An optional string indicating the arc type for the compiled FST. This argument is silently ignored if 
+    istring and/or ostring is already compiled.
+
+  * input_token_type: Either a string indicating how the upper string is to be encoded as arc labels---one of: utf8" 
+    (encodes the strings as UTF-8 encoded Unicode string), "byte" (encodes the string as raw bytes)---or a SymbolTable 
+    to be used to encode the string.
+
+  * output_token_type: Either a string indicating how the lower string is to be encoded as arc labels---one of: utf8" 
+    (encodes the strings as UTF-8 encoded Unicode string), "byte" (encodes the string as raw bytes)---or a SymbolTable 
+    to be used to encode the string.
+
+  * attach_input_symbols: should the symbol table used to compile the input-side acceptor (if applicable) be attached 
+    to the FST?
+    
+  * attach_output_symbols: should the symbol table used to compile the output-side acceptor (if applicable) be attached 
+    to the FST?
+    
+    
+# cdrewrite
+    
+cdrewrite(tau, lambda, rho, sigma_star, direction="ltr", mode="obl")
+Generates a transducer expressing a context-dependent rewrite rule.
+This operation compiles a transducer representing a context-dependent rewrite rule of the form
+
+    phi -> psi / lambda __ rho
+
+over a finite vocabulary. To apply the resulting transducer, simply compose it with an input string or lattice.
+
+Args:
+  * tau: A (weighted) transducer representing phi -> psi.
+  * lambda: An unweighted acceptor representing the left context.
+  * rho: An unweighted acceptor representing the right context.
+  * sigma_star: A cyclic, unweighted acceptor representing the closure over the
+      alphabet.
+  * direction: A string specifying the direction of rule application; one of:
+      "ltr" (left-to-right application), "rtl" (right-to-left application),
+      or "sim" (simultaneous application).
+  * mode: A string specifying the mode of rule application; one of: "obl"
+      (obligatory application), "opt" (optional application).
+
+Returns:
+  An rewrite rule FST.
+  
+
+# stringify
+  
+stringify(self, token_type="byte")
+
+Creates a string from a string FST.
+
+This method returns the string recognized by the FST as a Python byte or
+Unicode string. This is only well-defined when the FST is an acceptor and a
+"string" FST (meaning that the start state is numbered 0, and there is
+exactly one transition from each state i to each state i + 1, there are no
+other transitions, and the last state is final). Depending on the requested
+token type, the arc labels are interpreted as a UTF-8-encoded Unicode
+string, raw bytes, or as a concatenation of string labels from the output
+symbol table.
+
+The underlying routine reads only the output labels, so if the FST is
+not an acceptor, it will be treated as the output projection of the FST.
+
+Args:
+  * token_type: A string indicating how the string is to be constructed from arc labels---one of: "byte" (interprets 
+    arc labels as raw bytes), "utf8" (interprets arc labels as Unicode code points), or a SymbolTable.
+  * rm_epsilon: Should epsilons be removed?
+  
+  
+# closure(self, lower)
+closure(self, lower, upper)
+
+https://blogs.cornell.edu/finitestatecompling/2016/09/04/fstclosure/comment-page-1/
+
+Computes concatenative closure.
+
+This operation destructively converts the FST to its concatenative closure.
+If A transduces string x to y with weight w, then the zero-argument form
+`A.closure()` mutates A so that it transduces between empty strings with
+weight 1, transduces string x to y with weight w, transduces xx to yy with
+weight w \otimes w, string xxx to yyy with weight w \otimes w \otimes w
+(and so on).
+
+When called with two optional positive integer arguments, these act as
+lower and upper bounds, respectively, for the number of cycles through the
+original FST that the mutated FST permits. Therefore, =A.closure(0, 1)=
+mutates A so that it permits 0 or 1 cycles; i.e., the mutated A transduces
+between empty strings or transduces x to y.
+
+When called with one optional positive integer argument, this argument
+acts as the lower bound, with the upper bound implicitly set to infinity.
+Therefore, `A.closure(1)` performs a mutation roughly equivalent to
+`A.closure()` except that the former does not transduce between empty
+strings.
+
+The following are the equivalents for the closure-style syntax used in
+Perl-style regular expressions:
+
+Regexp:             This method:            Copy shortcuts:
+
+/x?/                x.closure(0, 1)         x.ques
+/x*/                x.closure()             x.star
+/x+/                x.closure(1)            x.plus
+/x{N}/              x.closure(N, N)
+/x{M,N}/            x.closure(M, N)
+/x{N,}/             x.closure(N)
+/x{,N}/             x.closure(0, N)
+
+Args:
+  lower: lower bound.
+  upper: upper bound.
+
+  
+# shortestpath
+  
+shortestpath(ifst, delta=0.0009765625, nshortest=1, nstate=NO_STATE_ID, queue_type="auto", unique=False, weight=None)
+
+Construct an FST containing the shortest path(s) in the input FST.
+
+This operation produces an FST containing the n-shortest paths in the input
+FST. The n-shortest paths are the n-lowest weight paths w.r.t. the natural
+semiring order. The single path that can be read from the ith of at most n
+transitions leaving the initial state of the resulting FST is the ith
+shortest path. The weights need to be right distributive and have the path
+property. They also need to be left distributive as well for n-shortest with
+n > 1 (e.g., TropicalWeight).
+
+Args:
+  * ifst: The input FST.
+  * delta: Comparison/quantization delta.
+  * nshortest: The number of paths to return.
+  * nstate: State number threshold.
+  * queue_type: A string matching a known queue type; one of: "auto", "fifo",
+      "lifo", "shortest", "state", "top".
+  * unique: Should the resulting FST only contain distinct paths? (Requires
+      the input FST to be an acceptor; epsilons are treated as if they are
+      regular symbols.)
+  * weight: A Weight or weight string indicating the desired weight threshold
+      below which paths are pruned; if omitted, no paths are pruned.
+      
+      
+# optimize
+
+optimize(self, compute_props=False)
+
+Performs a generic optimization of the FST.
+
+This operation destructively optimizes the FST using epsilon-removal,
+arc-sum mapping, determinization, and minimization (where possible). The
+algorithm is as follows:
+
+   * If the FST is not (known to be) epsilon-free, perform epsilon-removal.
+   * Combine identically labeled multi-arcs and sum their weights.
+   * If the FST does not have idempotent weights, halt.
+   * If the FST is not (known to be) deterministic:
+  - If the FST is a (known) acceptor:
+       * If the FST is not (known to be) unweighted and/or acyclic, encode
+      weights.
+  - Otherwise, encode labels and, if the FST is not (known to be)
+    unweighted, encode weights.
+  - Determinize the FST.
+   * Minimize the FST.
+   * Decode the FST and combine identically-labeled multi-arcs and sum their
+  weights, if the FST was previously encoded.
+
+By default, FST properties are not computed if they are not already set.
+
+This optimization may result in a reduction of size (due to epsilon-removal,
+arc-sum mapping, and minimization) and possibly faster composition, but
+determinization (a prerequisite of minimization) may result in an
+exponential blowup in size in the worst case. Judicious use of optimization
+is a bit of a black art.
+
+Args:
+  compute_props: Should unknown FST properties be computed to help choose
+      appropriate optimizations?
+    
+
+# determinize  
+      
+determinize(ifst, delta=0.0009765625, det_type="functional",
+            nstate=NO_STATE_ID, subsequential_label=0, weight=None,
+            incremental_subsequential_label=False)
+
+Constructively determinizes a weighted FST.
+
+This operations creates an equivalent FST that has the property that no
+state has two transitions with the same input label. For this algorithm,
+epsilon transitions are treated as regular symbols (cf. `rmepsilon`).
+
+Args:
+  ifst: The input FST.
+  delta: Comparison/quantization delta.
+  det_type: Type of determinization; one of: "functional" (input transducer is
+      functional), "nonfunctional" (input transducer is not functional) and
+      disambiguate" (input transducer is not functional but only keep the min
+      of ambiguous outputs).
+  nstate: State number threshold.
+  subsequential_label: Input label of arc corresponding to residual final
+      output when producing a subsequential transducer.
+  weight: A Weight or weight string indicating the desired weight threshold
+      below which paths are pruned; if omitted, no paths are pruned.
+  increment_subsequential_label: Increment subsequential when creating
+      several arcs for the residual final output at a given state.
+
+Returns:
+  An equivalent deterministic FST.
+  
+  
+# disambiguate
+  
+disambiguate(ifst, delta=0.0009765625, nstate=NO_STATE_ID,
+             subsequential_label=0, weight=None):
+
+Constructively disambiguates a weighted transducer.
+
+This operation disambiguates a weighted transducer. The result will be an
+equivalent FST that has the property that no two successful paths have the
+same input labeling. For this algorithm, epsilon transitions are treated as
+regular symbols (cf. `rmepsilon`).
+
+Args:
+  ifst: The input FST.
+  delta: Comparison/quantization delta.
+  nstate: State number threshold.
+  subsequential_label: Input label of arc corresponding to residual final
+      output when producing a subsequential transducer.
+  weight: A Weight or weight string indicating the desired weight threshold
+      below which paths are pruned; if omitted, no paths are pruned.
+
+Returns:
+  An equivalent disambiguated FST.
+      
+      
+# fstinfo test_fst.fst
+fst type                                          vector
+arc type                                          standard
+input symbol table                                **Byte symbols
+output symbol table                               **Byte symbols
+№ of states                                       56
+№ of arcs                                         5480
+initial state                                     0
+№ of final states                                 37
+№ of input/output epsilons                        0
+№ of input epsilons                               0
+№ of output epsilons                              28
+input label multiplicity                          1.01204
+output label multiplicity                         1.00292
+№ of accessible states                            56
+№ of coaccessible states                          56
+№ of connected states                             56
+№ of connected components                         1
+№ of strongly conn components                     2
+input matcher                                     y
+output matcher                                    n
+input lookahead                                   n
+output lookahead                                  n
+expanded                                          y
+mutable                                           y
+error                                             n
+acceptor                                          n
+input deterministic                               n
+output deterministic                              n
+input/output epsilons                             n
+input epsilons                                    n
+output epsilons                                   y
+input label sorted                                y
+output label sorted                               n
+weighted                                          y
+cyclic                                            y
+cyclic at initial state                           y
+top sorted                                        n
+accessible                                        y
+coaccessible                                      y
+string                                            n
+weighted cycles                                   y
+
+
+# dot -Tpng test_fst.dot > output.png

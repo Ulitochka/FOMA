@@ -1,0 +1,39 @@
+# info_cables.foma
+
+
+def LLL [a | b | c | d | e | f | g | h | i | j | k | l | m | n | o | p | q | r | s | t | u | v | w | x | y | z];                          # LK: latin_letters_lower
+def CLU [Й | Ц | У | К | Е | Н | Г | Ш | Щ | З | Х | Ъ | Ф | Ы | В | А | П | Р | О | Л | Д | Ж | Э | Я | Ч | С | М | И | Т | Ь | Б | Ю];  # LK: cyrillic_letters_upper
+def CLL [й | ц | у | к | е | н | г | ш | щ | з | х | ъ | ф | ы | в | а | п | р | о | л | д | ж | э | я | ч | с | м | и | т | ь | б | ю];  # LK: cyrillic_letters_lower
+def LLU [A | B | C | D | E | F | G | H | I | J | K | L | M | N | O | P | Q | R | S | T | U | V | W | X | Y | Z];                          # LK: c_letters_upper
+def D [%0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9];                                                                                           # LK: digits
+def S [x | X | х] ;                                                                                                                       # LK: splitters
+def FP [%. | %,];                                                                                                                              # LK: float_points
+
+
+define Zili0 D -> Zili || [D LLL | LLL] " " _ " " S ;
+
+define NumberConnectingWires D -> NumberConnectingWires || S " " _ " " S ;
+
+define Diameter0 D -> Diameter || S " " _ " " FP ;
+
+define Diameter1 FP -> Diameter || Diameter " " _ " " D;
+
+define Diameter2 D* -> Diameter || Diameter " " _ " " [мм | LLU | D];
+
+define Len0 D* -> Len || [мм | LLL | Diameter | D] " " _ " " м;
+
+define Len1 D* -> Len || [CLU | CLL] " " _ М;
+
+define Len2 D* -> Len || [CLU | CLL | LLU] " " _ " " м;
+
+define Grammar Zili0                           .o.
+               NumberConnectingWires           .o.
+               Diameter0                       .o.
+               Diameter1                       .o.
+               Diameter2                       .o.
+               Len0                            .o.
+               Len1                            .o.
+               Len2;
+
+regex Grammar;
+
